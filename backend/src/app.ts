@@ -8,6 +8,9 @@ import { notFound } from "./middleware/notFound.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { AppError } from "./utils/AppError.js";
 import { getDBStatus } from "./config/db.js";
+import authRoutes from "./routes/authRoutes.js";
+import { protect } from "./middleware/auth.js";
+import { authController } from "./controllers/authController.js";
 
 const app: Application = express();
 
@@ -47,6 +50,10 @@ app.get("/api/test-error", (_req: Request, _res: Response) => {
     reason: "Testing global exception handler",
   });
 });
+
+// API Routes
+app.use("/api/auth", authRoutes);
+app.get("/api/users/me", protect, authController.getMe);
 
 // 404 handler
 app.use(notFound);
