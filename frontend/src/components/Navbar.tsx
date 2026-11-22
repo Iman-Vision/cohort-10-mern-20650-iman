@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
+import ThemeToggle from './ThemeToggle';
 
 interface NavItem {
   label: string;
@@ -19,12 +20,12 @@ const Navbar = (): React.JSX.Element => {
     [
       'text-sm font-medium transition-colors',
       isActive
-        ? 'text-indigo-600 dark:text-indigo-400'
+        ? 'text-indigo-600 dark:text-indigo-400 font-semibold'
         : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white',
     ].join(' ');
 
   return (
-    <header className="sticky top-0 z-40 border-b border-gray-200 bg-white/90 backdrop-blur-sm dark:border-gray-800 dark:bg-gray-950/90">
+    <header className="sticky top-0 z-40 border-b border-gray-200 bg-white/90 backdrop-blur-sm dark:border-gray-800 dark:bg-gray-950/90 transition-colors">
       <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
         {/* Logo */}
         <Link
@@ -45,8 +46,9 @@ const Navbar = (): React.JSX.Element => {
           ))}
         </ul>
 
-        {/* Desktop auth links */}
+        {/* Desktop actions: Theme Toggle + Auth */}
         <div className="hidden items-center gap-3 sm:flex">
+          <ThemeToggle />
           <Link
             to="/login"
             className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors"
@@ -61,24 +63,27 @@ const Navbar = (): React.JSX.Element => {
           </Link>
         </div>
 
-        {/* Mobile hamburger */}
-        <button
-          type="button"
-          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen((prev) => !prev)}
-          className="flex flex-col items-center justify-center gap-1.5 p-2 sm:hidden"
-        >
-          <span
-            className={`block h-0.5 w-5 bg-gray-700 dark:bg-gray-200 transition-transform duration-200 ${menuOpen ? 'translate-y-2 rotate-45' : ''}`}
-          />
-          <span
-            className={`block h-0.5 w-5 bg-gray-700 dark:bg-gray-200 transition-opacity duration-200 ${menuOpen ? 'opacity-0' : ''}`}
-          />
-          <span
-            className={`block h-0.5 w-5 bg-gray-700 dark:bg-gray-200 transition-transform duration-200 ${menuOpen ? '-translate-y-2 -rotate-45' : ''}`}
-          />
-        </button>
+        {/* Mobile controls */}
+        <div className="flex items-center gap-2 sm:hidden">
+          <ThemeToggle />
+          <button
+            type="button"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((prev) => !prev)}
+            className="flex flex-col items-center justify-center gap-1.5 p-2"
+          >
+            <span
+              className={`block h-0.5 w-5 bg-gray-700 dark:bg-gray-200 transition-transform duration-200 ${menuOpen ? 'translate-y-2 rotate-45' : ''}`}
+            />
+            <span
+              className={`block h-0.5 w-5 bg-gray-700 dark:bg-gray-200 transition-opacity duration-200 ${menuOpen ? 'opacity-0' : ''}`}
+            />
+            <span
+              className={`block h-0.5 w-5 bg-gray-700 dark:bg-gray-200 transition-transform duration-200 ${menuOpen ? '-translate-y-2 -rotate-45' : ''}`}
+            />
+          </button>
+        </div>
       </nav>
 
       {/* Mobile drawer */}
