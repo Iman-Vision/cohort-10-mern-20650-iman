@@ -23,13 +23,13 @@ app.use(
   }),
 );
 
+// HTTP Request logging with Pino (registered before body parsers to log parser rejections)
+app.use(requestLogger);
+
 // Body and Cookie parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
-// HTTP Request logging with Pino
-app.use(requestLogger);
 
 // Health check endpoint
 app.get("/api/health", (_req: Request, res: Response) => {

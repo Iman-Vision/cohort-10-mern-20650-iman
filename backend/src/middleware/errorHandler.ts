@@ -19,6 +19,22 @@ interface MongooseValidationError extends Error {
   errors: Record<string, { message: string; path: string }>;
 }
 
+interface BodyParserError extends Error {
+  status?: number;
+  statusCode?: number;
+  body?: string;
+  type?: string;
+}
+
+const isBodyParserError = (error: unknown): error is BodyParserError => {
+  if (typeof error !== "object" || error === null) {
+    return false;
+  }
+  const candidate = error as Record<string, unknown>;
+  const hasStatus = typeof candidate.status === "number" || typeof candidate.statusCode === "number";
+  return hasStatus && typeof candidate.type === "string";
+};
+
 export const errorHandler: ErrorRequestHandler = (
   err: Error | AppError,
   req: Request,
@@ -37,6 +53,24 @@ export const errorHandler: ErrorRequestHandler = (
     code = err.code;
     message = err.message;
     details = err.details;
+  }
+  // Body parser errors (malformed JSON or oversized body)
+  else if (isBodyParserError(err)) {
+    const parserStatus = err.status ?? err.statusCode ?? 400;
+    statusCode = parserStatus;
+
+    if (err.type === "entity.parse.failed" || parserStatus === 400) {
+      statusCode = 400;
+      code = "INVALID_JSON";
+      message = "Request body contains invalid JSON.";
+    } else if (err.type === "entity.too.large" || parserStatus === 413) {
+      statusCode = 413;
+      code = "PAYLOAD_TOO_LARGE";
+      message = "Request payload exceeds allowed limit.";
+    } else {
+      code = "BAD_REQUEST";
+      message = err.message || "Invalid request.";
+    }
   }
   // Mongoose CastError (invalid ObjectId)
   else if (err.name === "CastError") {
@@ -73,11 +107,15 @@ export const errorHandler: ErrorRequestHandler = (
     message = "Authentication token expired. Please log in again.";
   }
 
-  // Log error using Pino
+  // Safe error logging (CWE-532): only log name, message, stack. Never log raw body.
   if (statusCode >= 500) {
     logger.error(
       {
-        err,
+        err: {
+          name: err.name,
+          message: err.message,
+          stack: err.stack,
+        },
         method: req.method,
         url: req.originalUrl,
         requestId: req.id,
@@ -97,14 +135,14 @@ export const errorHandler: ErrorRequestHandler = (
     );
   }
 
-  // Response payload
+  // Response payload (stack trace exposed strictly in development mode)
   res.status(statusCode).json({
     success: false,
     error: {
       code,
       message,
       ...(details !== undefined && { details }),
-      ...(env.nodeEnv !== "production" && { stack: err.stack }),
+      ...(env.nodeEnv === "development" && { stack: err.stack }),
     },
   });
 };

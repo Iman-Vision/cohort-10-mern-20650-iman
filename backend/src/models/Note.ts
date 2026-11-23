@@ -25,7 +25,7 @@ export interface INote extends Document {
   pinned: boolean;
   color: NoteColor;
   tags: string[];
-  shareToken: string | null;
+  shareToken?: string | null;
   isShared: boolean;
   deletedAt: Date | null;
   createdAt: Date;
@@ -105,8 +105,14 @@ noteSchema.index({ user: 1, tags: 1 });
 // 3. Full-text search index across title and plain text content
 noteSchema.index({ title: "text", plainText: "text" });
 
-// 4. Unique sparse index for public share tokens
-noteSchema.index({ shareToken: 1 }, { unique: true, sparse: true });
+// 4. Unique partial index for public share tokens (excludes null and non-string values)
+noteSchema.index(
+  { shareToken: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { shareToken: { $type: "string" } },
+  },
+);
 
 // 5. 30-day TTL index for soft-deleted notes: automatically permanently purged by Mongo after 30 days
 noteSchema.index({ deletedAt: 1 }, { expireAfterSeconds: 2592000 });

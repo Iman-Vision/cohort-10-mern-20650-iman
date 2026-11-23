@@ -12,8 +12,15 @@ export interface EnvConfig {
   logLevel: string;
 }
 
+const validNodeEnvs = ["development", "production", "test"] as const;
+const rawNodeEnv = process.env.NODE_ENV;
+const nodeEnv: EnvConfig["nodeEnv"] =
+  rawNodeEnv && validNodeEnvs.includes(rawNodeEnv as (typeof validNodeEnvs)[number])
+    ? (rawNodeEnv as EnvConfig["nodeEnv"])
+    : "production";
+
 export const env: EnvConfig = {
-  nodeEnv: (process.env.NODE_ENV as EnvConfig["nodeEnv"]) || "development",
+  nodeEnv,
   port: parseInt(process.env.PORT || "5000", 10),
   clientUrl: process.env.CLIENT_URL || "http://localhost:5173",
   mongodbUri:

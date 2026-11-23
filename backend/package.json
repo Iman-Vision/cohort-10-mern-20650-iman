@@ -1,13 +1,14 @@
 {
   "name": "notes-backend",
   "version": "1.0.0",
+  "type": "module",
   "description": "Backend API for Notes App",
   "main": "dist/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "lint": "eslint src/**/*.ts",
+    "lint": "eslint \"src/**/*.ts\"",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [
@@ -15,12 +16,14 @@
     "mern",
     "typescript",
     "express",
-    "mongodb"
+    "mongodb",
+    "jwt",
+    "auth"
   ],
   "author": "Iman-Vision",
   "license": "ISC",
   "dependencies": {
-    "bcryptjs": "^3.0.3",
+    "bcryptjs": "^3.0.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^18.0.10",
@@ -34,6 +37,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
@@ -41,8 +45,10 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.6.6",
     "@types/pino-http": "^5.8.4",
+    "eslint": "^10.15.0",
     "pino-pretty": "^13.2.0",
     "tsx": "^4.23.15",
-    "typescript": "^7.0.2"
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.73.0"
   }
 }
