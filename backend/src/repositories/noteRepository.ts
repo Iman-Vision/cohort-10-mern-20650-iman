@@ -1,6 +1,8 @@
-import mongoose, { type FilterQuery } from "mongoose";
+import mongoose from "mongoose";
 import { Note, type INote } from "../models/Note.js";
 import type { CreateNoteDTO, NoteFilterQuery } from "../types/note.js";
+
+type NoteFilter = Record<string, unknown>;
 
 export class NoteRepository {
   public async create(
@@ -18,7 +20,7 @@ export class NoteRepository {
     userId: string,
     filters?: NoteFilterQuery,
   ): Promise<INote[]> {
-    const query: FilterQuery<INote> = {
+    const query: NoteFilter = {
       user: new mongoose.Types.ObjectId(userId),
       deletedAt: null,
     };
@@ -58,7 +60,7 @@ export class NoteRepository {
     userId: string,
     includeTrash = false,
   ): Promise<INote | null> {
-    const query: FilterQuery<INote> = {
+    const query: NoteFilter = {
       _id: new mongoose.Types.ObjectId(id),
       user: new mongoose.Types.ObjectId(userId),
     };

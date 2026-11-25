@@ -7,6 +7,11 @@ import type {
   NoteFilterQuery,
 } from "../types/note.js";
 
+const getIdParam = (req: Request): string => {
+  const { id } = req.params;
+  return Array.isArray(id) ? id[0] : id;
+};
+
 export class NoteController {
   private service: NoteService;
 
@@ -45,7 +50,7 @@ export class NoteController {
   public getById = asyncHandler(
     async (req: Request, res: Response): Promise<void> => {
       const userId = req.user!.id;
-      const { id } = req.params;
+      const id = getIdParam(req);
       const note = await this.service.getNoteById(id, userId);
 
       res.status(200).json({
@@ -58,7 +63,7 @@ export class NoteController {
   public update = asyncHandler(
     async (req: Request, res: Response): Promise<void> => {
       const userId = req.user!.id;
-      const { id } = req.params;
+      const id = getIdParam(req);
       const dto = req.body as UpdateNoteDTO;
       const note = await this.service.updateNote(id, userId, dto);
 
@@ -73,7 +78,7 @@ export class NoteController {
   public softDelete = asyncHandler(
     async (req: Request, res: Response): Promise<void> => {
       const userId = req.user!.id;
-      const { id } = req.params;
+      const id = getIdParam(req);
       await this.service.softDeleteNote(id, userId);
 
       res.status(200).json({
@@ -99,7 +104,7 @@ export class NoteController {
   public restore = asyncHandler(
     async (req: Request, res: Response): Promise<void> => {
       const userId = req.user!.id;
-      const { id } = req.params;
+      const id = getIdParam(req);
       const note = await this.service.restoreNote(id, userId);
 
       res.status(200).json({
@@ -113,7 +118,7 @@ export class NoteController {
   public permanentDelete = asyncHandler(
     async (req: Request, res: Response): Promise<void> => {
       const userId = req.user!.id;
-      const { id } = req.params;
+      const id = getIdParam(req);
       await this.service.permanentlyDeleteNote(id, userId);
 
       res.status(200).json({
