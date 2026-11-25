@@ -31,7 +31,7 @@ export const validateBody = (schema: ZodType): RequestHandler => {
 export const validateQuery = (schema: ZodType): RequestHandler => {
   return (req: Request, _res: Response, next: NextFunction): void => {
     try {
-      req.query = schema.parse(req.query) as Request["query"];
+      schema.parse(req.query);
       next();
     } catch (error: unknown) {
       if (error instanceof ZodError) {

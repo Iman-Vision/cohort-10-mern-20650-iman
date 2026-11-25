@@ -84,7 +84,7 @@ export class NoteRepository {
         deletedAt: null,
       },
       { $set: update },
-      { new: true, runValidators: true },
+      { returnDocument: "after", runValidators: true },
     ).exec();
   }
 
@@ -96,7 +96,7 @@ export class NoteRepository {
         deletedAt: null,
       },
       { $set: { deletedAt: new Date() } },
-      { new: true },
+      { returnDocument: "after" },
     ).exec();
   }
 
@@ -108,7 +108,7 @@ export class NoteRepository {
         deletedAt: { $ne: null },
       },
       { $set: { deletedAt: null } },
-      { new: true },
+      { returnDocument: "after" },
     ).exec();
   }
 
