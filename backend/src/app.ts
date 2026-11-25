@@ -9,6 +9,7 @@ import { errorHandler } from "./middleware/errorHandler.js";
 import { AppError } from "./utils/AppError.js";
 import { getDBStatus } from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
+import noteRoutes from "./routes/noteRoutes.js";
 import { protect } from "./middleware/auth.js";
 import { authController } from "./controllers/authController.js";
 
@@ -53,6 +54,7 @@ app.get("/api/test-error", (_req: Request, _res: Response) => {
 
 // API Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/notes", noteRoutes);
 app.get("/api/users/me", protect, authController.getMe);
 
 // 404 handler
